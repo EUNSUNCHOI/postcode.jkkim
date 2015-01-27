@@ -38,23 +38,22 @@ public class AddressServiceLogic implements AddressService {
 		return addressPersist.findAddressByStreet(tmpStreet);
 	}
 
-	public void createAddressByDong(Address address) {
+	public boolean createAddressByDong(Address address) {
 		// TODO Auto-generated method stub
-		//유효성 검사
+		if(address == null){
+			return false;
+		}
 		
-		
-		
-		addressPersist.registerAddressByDong(address);
+		return addressPersist.registerAddressByDong(address);
 	}
 
-	public void createAddressByStreet(Address address) {
+	public boolean createAddressByStreet(Address address) {
 		// TODO Auto-generated method stub
-		//유효성 검사
+		if(address == null){
+			return false;
+		}
 		
-		
-		
-		
-		addressPersist.registerAddressByStreet(address);
+		return addressPersist.registerAddressByStreet(address);
 	}
 
 }

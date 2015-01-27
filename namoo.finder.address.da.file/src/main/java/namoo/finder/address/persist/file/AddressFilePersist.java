@@ -17,14 +17,14 @@ public class AddressFilePersist implements AddressPersist{
 		this.streetAddressStore = StreetAddressStore.getInstance();
 	}
 
-	public void registerAddressByDong(Address address) {
+	public boolean registerAddressByDong(Address address) {
 		// TODO Auto-generated method stub
-		dongAddressStore.registerAddress(address);
+		return dongAddressStore.registerAddress(address);
 	}
 	
-	public void registerAddressByStreet(Address address){
+	public boolean registerAddressByStreet(Address address){
 		// TODO Auto-generated method stub
-		streetAddressStore.registerAddress(address);
+		return streetAddressStore.registerAddress(address);
 	}
 
 	public List<Address> findAddressByDong(String tmpDong) {

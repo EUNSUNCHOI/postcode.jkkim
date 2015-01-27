@@ -6,8 +6,8 @@ import namoo.finder.address.entity.Address;
 
 public interface AddressService {
 
-	public void createAddressByDong(Address address);
-	public void createAddressByStreet(Address address);
+	public boolean createAddressByDong(Address address);
+	public boolean createAddressByStreet(Address address);
 	public List<Address> readAddressByDong(String tmpDong);
 	public List<Address> readAddressByStreet(String tmpStreet);
 	//public void updateAddress(Address address);

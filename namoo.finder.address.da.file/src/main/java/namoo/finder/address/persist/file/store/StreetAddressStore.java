@@ -2,13 +2,13 @@ package namoo.finder.address.persist.file.store;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import namoo.finder.address.entity.Address;
-import namoo.finder.address.entity.DongAddress;
 import namoo.finder.address.entity.StreetAddress;
 
 public class StreetAddressStore {
@@ -30,12 +30,32 @@ private static StreetAddressStore addressStore;
 
 	//----------------------------------------------------
 	
-	public void registerAddress(Address address){
+	public boolean registerAddress(Address address){
+
+		FileWriter fw = null;
 		
+		try {
+			fw = new FileWriter(STREET_FILE_NAME, true);
+			
+			fw.write(createCSVFromAddress(address));
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally{
+			if(fw != null){
+				try {
+					fw.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return true;
 	}
 	
 	public List<Address> findAddress(String tmpStreet){
-		//파일에서 찾아옴
 		
 		BufferedReader br = null;
 		String tmpAddress = null;
@@ -82,4 +102,28 @@ private static StreetAddressStore addressStore;
 		return address;
 	}
 
+	private String createCSVFromAddress(Address address){
+		
+		StringBuilder builder = new StringBuilder();
+		builder.append(address.getPostcode());
+		builder.append(CSV_SEPERATOR);
+		builder.append(CSV_SEPERATOR);
+		builder.append(address.getSi());
+		builder.append(CSV_SEPERATOR);
+		builder.append(CSV_SEPERATOR);
+		builder.append(address.getGu());
+		builder.append(CSV_SEPERATOR);
+		builder.append(CSV_SEPERATOR);
+		builder.append(CSV_SEPERATOR);
+		builder.append(CSV_SEPERATOR);
+		builder.append(CSV_SEPERATOR);
+		builder.append(address.getStreetAddress().getStreet());
+		builder.append(CSV_SEPERATOR);
+		builder.append(CSV_SEPERATOR);
+		builder.append(CSV_SEPERATOR);
+		builder.append(address.getStreetAddress().getDetails());
+		builder.append("\n");
+		
+		return builder.toString();
+	}
 }

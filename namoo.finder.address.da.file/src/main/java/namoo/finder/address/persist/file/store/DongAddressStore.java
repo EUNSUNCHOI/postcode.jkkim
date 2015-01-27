@@ -2,6 +2,7 @@ package namoo.finder.address.persist.file.store;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -9,7 +10,6 @@ import java.util.List;
 
 import namoo.finder.address.entity.Address;
 import namoo.finder.address.entity.DongAddress;
-import namoo.finder.address.entity.StreetAddress;
 
 public class DongAddressStore {
 
@@ -30,8 +30,29 @@ public class DongAddressStore {
 
 	//----------------------------------------------------
 	
-	public void registerAddress(Address address){
+	public boolean registerAddress(Address address){
 		
+		FileWriter fw = null;
+		
+		try {
+			fw = new FileWriter(DONG_FILE_NAME, true);
+			
+			fw.write(createTXTFromAddress(address));
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally{
+			if(fw != null){
+				try {
+					fw.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return true;
 	}
 	
 	public List<Address> findAddress(String tmpDong){
@@ -80,5 +101,22 @@ public class DongAddressStore {
 		Address address = new Address(data[1], data[2], dongAddress, null, data[0]); 
 		
 		return address;
+	}
+	
+	private String createTXTFromAddress(Address address){
+		
+		StringBuilder builder = new StringBuilder();
+		builder.append(address.getPostcode());
+		builder.append(TXT_SEPERATOR);
+		builder.append(address.getSi());
+		builder.append(TXT_SEPERATOR);
+		builder.append(address.getGu());
+		builder.append(TXT_SEPERATOR);
+		builder.append(address.getDongAddress().getDong());
+		builder.append(TXT_SEPERATOR);
+		builder.append(address.getDongAddress().getDetails());
+		builder.append("\n");
+		
+		return builder.toString();
 	}
 }
