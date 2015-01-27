@@ -17,8 +17,8 @@ public class AddressStore {
 	
 	private static final String CSV_SEPERATOR = ",";
 	private static final String TXT_SEPERATOR = "	";
-	private static final String STREET_FILE_NAME = "C:/address_update2.csv";
-	private static final String DONG_FILE_NAME = "C:/address_dong.txt";
+	private static final String STREET_FILE_NAME = "address_update2.csv";
+	private static final String DONG_FILE_NAME = "address_dong.txt";
 	
 	private AddressStore(){
 	}
