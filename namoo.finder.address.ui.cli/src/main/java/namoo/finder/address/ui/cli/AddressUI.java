@@ -21,7 +21,7 @@ public class AddressUI {
 	public void startFindAddress(){
 		
 		System.out.println("우편번호 검색을 시작합니다.");
-		System.out.println("도로명으로 검색: 1");
+		System.out.println("도로명으로 검색(서울시만 가능): 1");
 		System.out.println("읍면동명으로 검색: 2");
 		System.out.print("선택하세요: ");
 		

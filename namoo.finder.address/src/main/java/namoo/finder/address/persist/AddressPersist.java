@@ -6,7 +6,8 @@ import namoo.finder.address.entity.Address;
 
 public interface AddressPersist {
 
-	public void createAddress(Address address);
+	public void registerAddressByDong(Address address);
+	public void registerAddressByStreet(Address address);
 	public List<Address> findAddressByDong(String tmpDong);
 	public List<Address> findAddressByStreet(String tmpStreet);
 }

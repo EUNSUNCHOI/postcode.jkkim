@@ -15,11 +15,6 @@ public class AddressServiceLogic implements AddressService {
 	}
 	
 	//------------------------------------------------------------
-	
-	public void createAddress(Address address) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	public Address checkAddress(List<Address> addressList, int num) {
 		// TODO Auto-generated method stub
@@ -41,6 +36,25 @@ public class AddressServiceLogic implements AddressService {
 		}
 		
 		return addressPersist.findAddressByStreet(tmpStreet);
+	}
+
+	public void createAddressByDong(Address address) {
+		// TODO Auto-generated method stub
+		//유효성 검사
+		
+		
+		
+		addressPersist.registerAddressByDong(address);
+	}
+
+	public void createAddressByStreet(Address address) {
+		// TODO Auto-generated method stub
+		//유효성 검사
+		
+		
+		
+		
+		addressPersist.registerAddressByStreet(address);
 	}
 
 }
