@@ -4,9 +4,11 @@ public class Address {
 
 	private String si;
 	private String gu;
-	private String street;
-	private String details;
-	private int postcode;
+	
+	private DongAddress dongAddress;
+	private StreetAddress streetAddress;
+
+	private String postcode;
 	
 	//-------------------------------------------------------------
 	
@@ -14,12 +16,13 @@ public class Address {
 		
 	}
 	
-	public Address(String si, String gu, String street, String details, int postcode){
+	public Address(String si, String gu, DongAddress dongAddress, 
+			StreetAddress streetAddress, String postcode){
 		
 		this.si = si;
 		this.gu = gu;
-		this.street = street;
-		this.details = details;
+		this.dongAddress = dongAddress;
+		this.streetAddress = streetAddress;
 		this.postcode = postcode;
 	}
 
@@ -39,27 +42,27 @@ public class Address {
 		this.gu = gu;
 	}
 
-	public String getStreet() {
-		return street;
+	public DongAddress getDongAddress() {
+		return dongAddress;
 	}
 
-	public void setStreet(String street) {
-		this.street = street;
+	public void setDongAddress(DongAddress dongAddress) {
+		this.dongAddress = dongAddress;
 	}
 
-	public String getDetails() {
-		return details;
+	public StreetAddress getStreetAddress() {
+		return streetAddress;
 	}
 
-	public void setDetails(String details) {
-		this.details = details;
+	public void setStreetAddress(StreetAddress streetAddress) {
+		this.streetAddress = streetAddress;
 	}
 
-	public int getPostcode() {
+	public String getPostcode() {
 		return postcode;
 	}
 
-	public void setPostcode(int postcode) {
+	public void setPostcode(String postcode) {
 		this.postcode = postcode;
 	}
 	

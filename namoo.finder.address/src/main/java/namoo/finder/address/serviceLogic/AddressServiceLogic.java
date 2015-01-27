@@ -16,19 +16,31 @@ public class AddressServiceLogic implements AddressService {
 	
 	//------------------------------------------------------------
 	
-	public List<Address> readAddress(String tmpStreet) {
+	public void createAddress(Address address) {
 		// TODO Auto-generated method stub
 		
-		if(tmpStreet == null){
-			return null;
-		}
-		
-		return addressPersist.findAddress(tmpStreet);
 	}
 
 	public Address checkAddress(List<Address> addressList, int num) {
 		// TODO Auto-generated method stub
 		return addressList.get(num);
+	}
+
+	public List<Address> readAddressByDong(String tmpDong) {
+		// TODO Auto-generated method stub
+		if(tmpDong == null){
+			return null;
+		}
+		return addressPersist.findAddressByDong(tmpDong);
+	}
+
+	public List<Address> readAddressByStreet(String tmpStreet) {
+		// TODO Auto-generated method stub
+		if(tmpStreet == null){
+			return null;
+		}
+		
+		return addressPersist.findAddressByStreet(tmpStreet);
 	}
 
 }

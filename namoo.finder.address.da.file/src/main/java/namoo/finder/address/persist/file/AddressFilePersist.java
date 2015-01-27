@@ -13,11 +13,21 @@ public class AddressFilePersist implements AddressPersist{
 	public AddressFilePersist(){
 		this.addressStore = AddressStore.getInstance();
 	}
-	
-	public List<Address> findAddress(String tmpStreet) {
+
+	public void createAddress(Address address) {
 		// TODO Auto-generated method stub
-		//도로명으로 검색
-		return addressStore.findAddress(tmpStreet);
+		
 	}
+
+	public List<Address> findAddressByDong(String tmpDong) {
+		// TODO Auto-generated method stub
+		return addressStore.findAddressByDong(tmpDong);
+	}
+
+	public List<Address> findAddressByStreet(String tmpStreet) {
+		// TODO Auto-generated method stub
+		return addressStore.findAddressByStreet(tmpStreet);
+	}
+
 
 }
