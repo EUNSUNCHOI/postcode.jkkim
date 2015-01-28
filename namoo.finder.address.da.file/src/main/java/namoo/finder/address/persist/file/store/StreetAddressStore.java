@@ -16,7 +16,8 @@ public class StreetAddressStore {
 private static StreetAddressStore addressStore;
 	
 	private static final String CSV_SEPERATOR = ",";
-	private static final String STREET_FILE_NAME = "address_update2.csv";
+	
+	private static final String STREET_FILE_NAME = "";
 	
 	private StreetAddressStore(){
 	}
@@ -40,14 +41,12 @@ private static StreetAddressStore addressStore;
 			fw.write(createCSVFromAddress(address));
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally{
 			if(fw != null){
 				try {
 					fw.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -76,14 +75,47 @@ private static StreetAddressStore addressStore;
 			}
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally{
 			if(br != null){
 				try {
 					br.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return addressList;
+	}
+	
+	public List<Address> findAddressByStreetPostcode(String postcode) {
+		//
+		BufferedReader br = null;
+		String tmpAddress = null;
+		List<Address> addressList = new ArrayList<Address>();
+		
+		try {
+			FileInputStream fis = new FileInputStream(STREET_FILE_NAME);
+			br = new BufferedReader(new InputStreamReader(fis));
+			
+			while ((tmpAddress = br.readLine()) != null) {
+				
+				String[] data = tmpAddress.split(CSV_SEPERATOR);
+				//우편번호로 검색
+				if(data[0].contains(postcode)){
+					Address address = createAddressFromCSV(tmpAddress);
+					addressList.add(address);
+				}
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally{
+			if(br != null){
+				try {
+					br.close();
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}

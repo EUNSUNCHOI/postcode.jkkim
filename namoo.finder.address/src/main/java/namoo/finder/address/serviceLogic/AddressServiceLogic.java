@@ -17,12 +17,12 @@ public class AddressServiceLogic implements AddressService {
 	//------------------------------------------------------------
 
 	public Address checkAddress(List<Address> addressList, int num) {
-		// TODO Auto-generated method stub
+		// 
 		return addressList.get(num);
 	}
 
 	public List<Address> readAddressByDong(String tmpDong) {
-		// TODO Auto-generated method stub
+		//
 		if(tmpDong == null){
 			return null;
 		}
@@ -30,7 +30,7 @@ public class AddressServiceLogic implements AddressService {
 	}
 
 	public List<Address> readAddressByStreet(String tmpStreet) {
-		// TODO Auto-generated method stub
+		//
 		if(tmpStreet == null){
 			return null;
 		}
@@ -38,8 +38,26 @@ public class AddressServiceLogic implements AddressService {
 		return addressPersist.findAddressByStreet(tmpStreet);
 	}
 
+	public List<Address> readAddressByDongPostcode(String postcode) {
+		//
+		if(postcode == null){
+			return null;
+		}
+		
+		return addressPersist.findAddressByDongPostcode(postcode);
+	}
+	
+	public List<Address> readAddressByStreetPostcode(String postcode) {
+		//
+		if(postcode == null){
+			return null;
+		}
+		
+		return addressPersist.findAddressByStreetPostcode(postcode);
+	}
+	
 	public boolean createAddressByDong(Address address) {
-		// TODO Auto-generated method stub
+		//
 		if(address == null){
 			return false;
 		}
@@ -48,7 +66,7 @@ public class AddressServiceLogic implements AddressService {
 	}
 
 	public boolean createAddressByStreet(Address address) {
-		// TODO Auto-generated method stub
+		//
 		if(address == null){
 			return false;
 		}
@@ -56,4 +74,12 @@ public class AddressServiceLogic implements AddressService {
 		return addressPersist.registerAddressByStreet(address);
 	}
 
+	public String changeFileToCSV(String fileName) {
+		//
+		if(fileName == null){
+			return null;
+		}
+		
+		return addressPersist.returnFile(fileName);
+	}
 }

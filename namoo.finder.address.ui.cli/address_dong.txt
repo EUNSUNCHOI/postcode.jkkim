@@ -52143,5 +52143,3 @@ ZIPCODE	SIDO	GUGUN	DONG	BUNJI	SEQ
 363-822	충북	청원군	현도면 중척리		52142
 363-821	충북	청원군	현도면 하석리		52143
 363-820	충북	청원군	현도면		52144
-123	si	gu	dong	나머지
-1234	si	gu	dong2	skajwl

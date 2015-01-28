@@ -26,7 +26,4 @@ public class StreetAddress {
 		this.details = details;
 	}
 	
-	//-------------------------------------------------------
-	
-	
 }

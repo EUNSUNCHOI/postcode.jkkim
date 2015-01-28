@@ -24,9 +24,6 @@ public class DongAddress {
 
 	public void setDetails(String details) {
 		this.details = details;
-	}
-	
-	//--------------------------------------------------
-	
+	}	
 	
 }

@@ -10,4 +10,7 @@ public interface AddressPersist {
 	public boolean registerAddressByStreet(Address address);
 	public List<Address> findAddressByDong(String tmpDong);
 	public List<Address> findAddressByStreet(String tmpStreet);
+	public List<Address> findAddressByDongPostcode(String postcode);
+	public List<Address> findAddressByStreetPostcode(String postcode);
+	public String returnFile(String fileName);
 }

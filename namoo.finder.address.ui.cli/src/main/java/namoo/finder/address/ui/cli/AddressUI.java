@@ -15,49 +15,88 @@ public class AddressUI {
 	private AddressService addressService;
 	private Scanner scanner;
 	
+	//private static final String STREET_FILE_NAME = "address_update2.csv";
+	private static final String DONG_FILE_NAME = "address_dong.csv";
+	
 	public AddressUI(){
 		addressService = new AddressServiceLogic(new AddressFilePersist());
 		scanner = new Scanner(System.in);
 	}
 
 	public void startFindAddress(){
-		
+		//
 		System.out.println("우편번호 검색을 시작합니다.");
-		System.out.println("도로명으로 검색(서울시만 가능): 1");
-		System.out.println("읍면동명으로 검색: 2");
-		System.out.println("도로명으로 주소 추가: 3");
-		System.out.println("읍면동명으로 주소 추가: 4");
-		System.out.print("선택하세요: ");
+		System.out.print("검색에 필요한 파일명을 입력해주세요(ex address_dong.txt): ");
+		String tmpFileName = scanner.nextLine();
 		
-		int choice = scanner.nextInt();
-		scanner.nextLine();
+		// 입력된 파일경로에 파일이 있는지 체크 후 csv파일로 변환
+		String fileName = addressService.changeFileToCSV(tmpFileName);
 		
-		switch(choice){
-		case 1:
-			readAddressByStreet();
-			break;
+		/*if(fileName == STREET_FILE_NAME){
+			System.out.println("도로명으로 주소 검색/추가 합니다.");
+			System.out.print("도로명으로 주소 검색: 1");
+			System.out.println("도로명으로 주소 추가: 2");
+			System.out.println("우편번호로 주소 검색: 3");
 			
-		case 2:
-			readAddressByDong();
-			break;
+			int choice = scanner.nextInt();
+			scanner.nextLine();
 			
-		case 3:
-			createAddressByStreet();
-			break;
+			switch(choice){
+			case 1:
+				readAddressByStreet(fileName);
+				break;
+				
+			case 2:
+				createAddressByStreet(fileName);
+				break;
+				
+			case 3:
+				readAddressByStreetPostcode(fileName);
+				break;
+				
+			default:
+				System.out.println("잘 못 입력하셨습니다.");
+				break;
+			}
+		}*/
 			
-		case 4:
-			createAddressByDong();
-			break;
+		if(fileName == DONG_FILE_NAME){
+			System.out.println("읍면동명으로 주소 검색/추가 합니다.");
+			System.out.println("읍면동명으로 주소 검색: 1");
+			System.out.println("읍면동명으로 주소 추가: 2");
+			System.out.println("우편번호로 주소 검색: 3");
+			System.out.print("선택하세요: ");
 			
-		default:
-			System.out.println("잘 못 입력하셨습니다.");
-			break;
+			int choice = scanner.nextInt();
+			scanner.nextLine();
+			
+			switch(choice){
+			case 1:
+				readAddressByDong();
+				break;
+				
+			case 2:
+				createAddressByDong();
+				break;
+				
+			case 3:
+				readAddressByDongPostcode();
+				break;
+				
+			default:
+				System.out.println("메뉴를 잘 못 입력하셨습니다.");
+				break;
+			}
+			
 		}
-		
+		else{
+			System.out.println("파일명을 잘 못 입력하셨습니다.");
+		}
+
 		scanner.close();
 	}
 	private void createAddressByDong() {
-		// TODO Auto-generated method stub
+		//
 		System.out.print("시도를 입력해주세요: ");
 		String si = scanner.nextLine();
 		
@@ -84,7 +123,7 @@ public class AddressUI {
 	}
 
 	private void createAddressByStreet() {
-		// TODO Auto-generated method stub
+		//
 		System.out.print("시도를 입력해주세요: ");
 		String si = scanner.nextLine();
 		
@@ -111,7 +150,7 @@ public class AddressUI {
 	}
 
 	private void readAddressByDong() {
-		// TODO Auto-generated method stub
+		//
 		int i = 0;
 		
 		System.out.print("찾으실 읍면동명을 입력해주세요: ");
@@ -140,10 +179,10 @@ public class AddressUI {
 	}
 
 	private void readAddressByStreet() {
-		// TODO Auto-generated method stub
+		//
 		int i = 0;
 		
-		System.out.print("찾으실 도로명을 입력해주세요: ");
+		System.out.print("찾으실 도로명을 입력해주세요(서울시만 가능): ");
 		
 		String tmpStreet = scanner.nextLine();
 		
@@ -168,6 +207,74 @@ public class AddressUI {
 		System.out.println("우편번호: " + address.getPostcode());
 	}
 
+	public void readAddressByDongPostcode(){
+		//
+		int i=0;
+		
+		System.out.print("찾으실 주소의 우편번호를 입력해주세요(ex 000-000): ");
+		String postcode = scanner.nextLine();
+		
+		List<Address> addressList = addressService.readAddressByDongPostcode(postcode);
+		
+		System.out.println("--------------주소 검색 결과--------------");
+		if(addressList == null || addressList.isEmpty()){
+			System.out.println("검색 결과가 없습니다.");
+			scanner.close();
+			System.exit(0);
+		}
+		
+		for (Address address : addressList) {
+			System.out.println(i + ": " + address.getSi() + " " + address.getGu() + " " 
+					+ address.getStreetAddress().getStreet() + " " + address.getStreetAddress().getDetails());
+			i++;
+		}
+		
+		System.out.print("해당 번호를 입력해주세요: ");
+		int num = scanner.nextInt();
+		
+		Address address = addressService.checkAddress(addressList, num);
+		
+		System.out.println("--------------주소 검색 결과--------------");
+		
+		System.out.println(address.getSi() + " " + address.getGu() + " " 
+				+ address.getStreetAddress().getStreet() + " " + address.getStreetAddress().getDetails());
+		
+	}
+	
+	public void readAddressByStreetPostcode(String fileName){
+		//
+		int i=0;
+		
+		System.out.print("찾으실 주소의 우편번호를 입력해주세요(ex 000000): ");
+		String postcode = scanner.nextLine();
+		
+		List<Address> addressList = addressService.readAddressByStreetPostcode(postcode);
+		
+		System.out.println("--------------주소 검색 결과--------------");
+		if(addressList == null || addressList.isEmpty()){
+			System.out.println("검색 결과가 없습니다.");
+			scanner.close();
+			System.exit(0);
+		}
+		
+		for (Address address : addressList) {
+			System.out.println(i + ": " + address.getSi() + " " + address.getGu() + " " 
+					+ address.getStreetAddress().getStreet() + " " + address.getStreetAddress().getDetails());
+			i++;
+		}
+		
+		System.out.print("해당 번호를 입력해주세요: ");
+		int num = scanner.nextInt();
+		
+		Address address = addressService.checkAddress(addressList, num);
+		
+		System.out.println("--------------주소 검색 결과--------------");
+		
+		System.out.println(address.getSi() + " " + address.getGu() + " " 
+				+ address.getStreetAddress().getStreet() + " " + address.getStreetAddress().getDetails());
+		
+	}
+	
 	public static void main(String[] args){
 		
 		new AddressUI().startFindAddress();
