@@ -69,7 +69,7 @@ public class CreateCSVorStreetAddress {
 		return builder.toString();
 	}
 	
-	public String createStreetIndexCSVFromAddress(Address address, int pointer){
+	public String createStreetIndexCSVFromAddress(Address address, long pointer){
 		//
 		StringBuilder builder = new StringBuilder();
 		

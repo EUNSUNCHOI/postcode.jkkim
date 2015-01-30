@@ -1,11 +1,9 @@
 package namoo.finder.address.persist.file.store1;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,9 +34,10 @@ public class StreetAddressStore1 {
 
 	//----------------------------------------------------
 	
-	public boolean registerAddress(Address address){
-		//
+public boolean registerAddress(Address address){
+		
 		FileWriter fw = null;
+		
 		try {
 			fw = new FileWriter(STREET_FILE_NAME, true);
 			
@@ -60,7 +59,10 @@ public class StreetAddressStore1 {
 	
 	public List<Address> findAddress(String tmpStreet){
 		//
+		long start = System.currentTimeMillis();
+		
 		BufferedReader br = null;
+		
 		String tmpAddress = null;
 		List<Address> addressList = new ArrayList<Address>();
 		
@@ -70,11 +72,14 @@ public class StreetAddressStore1 {
 			
 			while((tmpAddress = br.readLine()) != null){
 				String[] data = tmpAddress.split(CSV_SEPERATOR);
-				//
+				//tmpDong으로 검색
 				if(data[3].contains(tmpStreet)){
 					addressList.add(creator.createStreetAddressFromCSV(tmpAddress));
 				}
 			}
+			
+			long end = System.currentTimeMillis();
+			System.out.println( "findAddress 실행 시간 : " + ( end - start )/1000.0 );
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -92,7 +97,7 @@ public class StreetAddressStore1 {
 	}
 	
 	public List<Address> findAddressByStreetPostcode(String postcode) {
-		//
+		// 
 		BufferedReader br = null;
 		String tmpAddress = null;
 		List<Address> addressList = new ArrayList<Address>();
@@ -103,7 +108,7 @@ public class StreetAddressStore1 {
 			
 			while((tmpAddress = br.readLine()) != null){
 				String[] data = tmpAddress.split(CSV_SEPERATOR);
-				//
+				//postcode로 검색
 				if(data[0].contains(postcode)){
 					addressList.add(creator.createStreetAddressFromCSV(tmpAddress));
 				}
@@ -125,44 +130,36 @@ public class StreetAddressStore1 {
 	
 	public String returnFile(String tmpFileName){
 		//
+		long start = System.currentTimeMillis();
+		
 		BufferedReader br = null;
 		FileWriter fw = null;
-		FileInputStream fis = null;
+		
 		String txtAddress = null;
 		
 		try {
-			fis = new FileInputStream(tmpFileName);
-			br = new BufferedReader(new InputStreamReader(fis));
+			br = new BufferedReader(new FileReader(tmpFileName));
 			fw = new FileWriter(STREET_FILE_NAME, false);
 			
 			while((txtAddress = br.readLine()) != null){
 				Address address = creator.createStreetAddressFromTXT(txtAddress);
 				String csvAddress = creator.createCSVFromStreetAddress(address);
 				fw.write(csvAddress);
-			}			
+			}
+			
+			long end = System.currentTimeMillis();
+			System.out.println( "returnFile 실행 시간 : " + ( end - start )/1000.0 );
+			
 		} catch (IOException e) {
-			return null;
+			e.printStackTrace();
 		} finally{
-			if(fw != null){
-				try {
+			try {
+				if(fw != null)
 					fw.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if(fis != null){
-				try {
-					fis.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if(br != null){
-				try {
+				if(br != null)
 					br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 				

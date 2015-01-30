@@ -1,10 +1,10 @@
 package namoo.finder.address.persist.file.store_seek;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,28 +35,33 @@ public class StreetAddressStore3 {
 
 	//----------------------------------------------------
 	
-	public boolean registerAddress(Address address){
-		//
-		FileWriter fw = null;
+public boolean registerAddress(Address address){
+		
+		RandomAccessFile raf = null;
 		FileWriter fw_index = null;
 		
 		try {
-			fw = new FileWriter(STREET_FILE_NAME, true);
+			raf = new RandomAccessFile(STREET_FILE_NAME, "rw");
 			fw_index = new FileWriter(STREET_INDEX_FILE_NAME, true);
 			
-			fw.write(creator.createCSVFromStreetAddress(address));
-			//fw_index.write(creator.createStreetIndexCSVFromAddress(address, pointer));
+			String csvAddress = creator.createCSVFromStreetAddress(address);
+			
+			raf.skipBytes((int)raf.length());
+			long pointer = raf.getFilePointer();
+			raf.write(csvAddress.getBytes());
+
+			fw_index.write(creator.createStreetIndexCSVFromAddress(address, pointer));
 			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally{
-			if(fw != null && fw_index != null){
-				try {
-					fw.close();
+			try {
+				if(fw_index != null)
 					fw_index.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				if(raf != null)
+					raf.close();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 		return true;
@@ -65,36 +70,27 @@ public class StreetAddressStore3 {
 	public List<Address> findAddress(String tmpStreet){
 		//
 		long start = System.currentTimeMillis();
-
-		BufferedReader br = null;
+		
+		RandomAccessFile raf = null;
+		BufferedReader br_index = null;
+		
 		String tmpAddress = null;
+		
 		List<Address> addressList = new ArrayList<Address>();
-		List<String> idList = new ArrayList<String>();
 		
 		try {
-			FileInputStream fis = new FileInputStream(STREET_INDEX_FILE_NAME);
-			br = new BufferedReader(new InputStreamReader(fis));
+			br_index = new BufferedReader(new FileReader(STREET_INDEX_FILE_NAME));
+			raf = new RandomAccessFile(STREET_FILE_NAME, "r");
 			
-			while ((tmpAddress = br.readLine()) != null) {
-				
+			while ((tmpAddress = br_index.readLine()) != null) {
 				String[] data = tmpAddress.split(CSV_SEPERATOR);
 				//읍면동명으로 index에서 검색
 				if(data[1].contains(tmpStreet)){
-					idList.add(data[2]);
+					raf.seek(Integer.parseInt(data[2]));
+					String line = new String(raf.readLine().getBytes("ISO-8859-1"), "EUC-KR");
+					addressList.add(creator.createStreetAddressFromCSV(line));
 				}
-			}
-			//본래 파일에서 address를 가져옴
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(STREET_FILE_NAME)));
-			
-			while((tmpAddress = br.readLine()) != null){
-				String[] data = tmpAddress.split(CSV_SEPERATOR);
-				//id로 검색
-				for (String id : idList) {
-					if(id.equals(data[0])){
-						addressList.add(creator.createStreetAddressFromCSV(tmpAddress));
-					}
-				}
-			}
+			}			
 			
 			long end = System.currentTimeMillis();
 			System.out.println( "findAddress 실행 시간 : " + ( end - start )/1000.0 );
@@ -102,58 +98,51 @@ public class StreetAddressStore3 {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally{
-			if(br != null){
-				try {
-					br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			try {
+				if(br_index != null)
+					br_index.close();
+				if(raf != null)
+					raf.close();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 		
 		return addressList;
 	}
 	
-	public List<Address> findAddressByStreetPostcode(String postcode) {
-		//
-		BufferedReader br = null;
+	public List<Address> findAddressByDongPostcode(String postcode) {
+		// 
+		RandomAccessFile raf = null;
+		BufferedReader br_index = null;
+		
 		String tmpAddress = null;
-		List<String> idList = new ArrayList<String>();
+		
 		List<Address> addressList = new ArrayList<Address>();
 		
 		try {
-			FileInputStream fis = new FileInputStream(STREET_INDEX_FILE_NAME);
-			br = new BufferedReader(new InputStreamReader(fis));
+			br_index = new BufferedReader(new FileReader(STREET_INDEX_FILE_NAME));
+			raf = new RandomAccessFile(STREET_FILE_NAME, "r");
 			
-			while ((tmpAddress = br.readLine()) != null) {
-				
+			while ((tmpAddress = br_index.readLine()) != null) {
 				String[] data = tmpAddress.split(CSV_SEPERATOR);
 				//우편번호로 index에서 검색
 				if(data[0].contains(postcode)){
-					idList.add(data[2]);
-				}
-			}
-			//본래파일에서 가져옴
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(STREET_FILE_NAME)));
-			
-			while((tmpAddress = br.readLine()) != null){
-				String[] data = tmpAddress.split(CSV_SEPERATOR);
-				//id로 검색
-				for (String id : idList) {
-					if(id.equals(data[0])){
-						addressList.add(creator.createStreetAddressFromCSV(tmpAddress));
-					}
+					raf.seek(Integer.parseInt(data[2]));
+					String line = new String(raf.readLine().getBytes("ISO-8859-1"), "EUC-KR");
+					addressList.add(creator.createStreetAddressFromCSV(line));
 				}
 			}			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally{
-			if(br != null){
-				try {
-					br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			try {
+				if(br_index != null)
+					br_index.close();
+				if(raf != null)
+					raf.close();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 		
@@ -162,89 +151,50 @@ public class StreetAddressStore3 {
 	
 	public String returnFile(String tmpFileName){
 		//
+		long start = System.currentTimeMillis();
+		
+		RandomAccessFile raf = null;
 		BufferedReader br = null;
-		FileWriter fw = null;
 		FileWriter fw_index = null;
-		FileInputStream fis = null;
 		String txtAddress = null;
+		long pointer = 0;
 		
 		try {
-			fis = new FileInputStream(tmpFileName);
-			br = new BufferedReader(new InputStreamReader(fis));
-			fw = new FileWriter(STREET_FILE_NAME, false);
+			br = new BufferedReader(new FileReader(tmpFileName));
 			fw_index = new FileWriter(STREET_INDEX_FILE_NAME, false);
+			raf = new RandomAccessFile(STREET_FILE_NAME, "rw");
 			
 			while((txtAddress = br.readLine()) != null){
+				
+				//txt파일로부터 address를 만들고 address로부터 csv파일을 씀
 				Address address = creator.createStreetAddressFromTXT(txtAddress);
 				String csvAddress = creator.createCSVFromStreetAddress(address);
-				fw.write(csvAddress);
-				//인덱스에 담을 위치정보를 받아 와야함
 				
-				
-				
+				pointer = raf.getFilePointer();
+				raf.write(csvAddress.getBytes());
 
-				//인덱스 정렬
-/*				
-				if(indexList.size() < 2){   ==> 시간 겁나오래걸림...
-					String csvIndex = createIndexCSVFromAddress(address);
-					indexList.add(csvIndex);
-				}
-				else{					
-					//'zipcode'는 제외한 우편번호 비교
-					for (int i=1 ; i<indexList.size() ; i++) {
-						String csvIndex = indexList.get(i);
-						String[] data = csvIndex.split(CSV_SEPERATOR);
-						String sortedPostcode = data[0];
-												
-						if(Integer.parseInt(address.getPostcode())
-								< Integer.parseInt(sortedPostcode)) {
-							
-							indexList.add(i+1, indexList.get(i));
-							indexList.add(i, createCSVFromAddress(address));
-							break;
-						}
-						if(i == indexList.size()-1){
-							indexList.add(createCSVFromAddress(address));
-							break;
-						}
-					}
-				}
-*/
-				//String csvIndex = creator.createStreetIndexCSVFromAddress(address, pointer);
-				//indexList.add(csvIndex);
-				//fw_index.write(csvIndex);
-			}
+				//csvIndex파일을 씀
+				String csvIndex = creator.createStreetIndexCSVFromAddress(address, pointer);
+				fw_index.write(csvIndex);
+			}		
 			
-			//정렬된 addressList를 index_file에 넣는다.
-//			for (String csvIndex : indexList) {
-//				fw_index.write(csvIndex);
-//			}
+			long end = System.currentTimeMillis();
+			System.out.println( "returnFile 실행 시간 : " + ( end - start )/1000.0 );
 			
 		} catch (IOException e) {
-			return null;
+			e.printStackTrace();
 		} finally{
-			if(fw != null && fw_index != null){
 				try {
-					fw.close();
-					fw_index.close();
+					if(fw_index != null)
+						fw_index.close();
+					if(br != null)
+						br.close();
+					if(raf != null)
+						raf.close();
 				} catch (IOException e) {
 					e.printStackTrace();
-				}
 			}
-			if(fis != null){
-				try {
-					fis.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if(br != null){
-				try {
-					br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			
 		}
 				
 		return STREET_FILE_NAME;
