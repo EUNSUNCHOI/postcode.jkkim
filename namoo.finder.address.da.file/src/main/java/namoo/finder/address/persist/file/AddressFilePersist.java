@@ -1,20 +1,24 @@
 package namoo.finder.address.persist.file;
 
+import java.io.File;
 import java.util.List;
 
 import namoo.finder.address.entity.Address;
 import namoo.finder.address.persist.AddressPersist;
-import namoo.finder.address.persist.file.store.DongAddressStore;
-import namoo.finder.address.persist.file.store.StreetAddressStore;
+import namoo.finder.address.persist.file.store1.DongAddressStore1;
+import namoo.finder.address.persist.file.store1.StreetAddressStore1;
 
 public class AddressFilePersist implements AddressPersist{
 	
-	private DongAddressStore dongAddressStore;
-	private StreetAddressStore streetAddressStore;
+	private DongAddressStore1 dongAddressStore;
+	private StreetAddressStore1 streetAddressStore;
+	
+	private static final String STREET_FILE_NAME = "address_street.txt";
+	private static final String DONG_FILE_NAME = "address_dong.txt";
 		
 	public AddressFilePersist(){
-		this.dongAddressStore = DongAddressStore.getInstance();
-		this.streetAddressStore = StreetAddressStore.getInstance();
+		this.dongAddressStore = DongAddressStore1.getInstance();
+		this.streetAddressStore = StreetAddressStore1.getInstance();
 	}
 
 	public boolean registerAddressByDong(Address address) {
@@ -49,7 +53,19 @@ public class AddressFilePersist implements AddressPersist{
 
 	public String returnFile(String fileName) {
 		//
-		return dongAddressStore.returnFile(fileName);
+		if(fileName == null){
+			return null;
+		}
+		//file 이 street파일인지 dong파일인지 분별
+		File file = new File(fileName);
+		if(file.getPath().equals(DONG_FILE_NAME)){
+			return dongAddressStore.returnFile(fileName);
+		}
+		else if(file.getPath().equals(STREET_FILE_NAME)){
+			return streetAddressStore.returnFile(fileName);
+		}
+		
+		return null;
 	}
 
 }
